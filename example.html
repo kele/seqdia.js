@@ -7,6 +7,7 @@
 
     <script src="underscore.js"></script> 
     <script src="svg.js"></script> 
+    <script src="seqdia.js"></script> 
 </head>
   
 <body>
@@ -16,34 +17,12 @@
 <script type="text/javascript" charset="utf-8">
 var draw = SVG('canvas');
 
-function createTextBox(content, draw)
-{
-    var text = draw.text(content);
+var actor = createActor('Kamil', draw);
 
-    var box = draw.rect(text.bbox().width + 15, text.bbox().height + 15);
-    box.fill('rgba(255, 255, 255, 0)');
-    box.attr({ 'stroke-width' : '1px'});
+actor.move(100, 100);
 
-    text.center(box.bbox().cx, box.bbox().cy);
-
-    var group = draw.group();
-    group.add(box);
-    group.add(text);
-
-    return group;
-}
-
-var box1 = createTextBox('Kele', draw);
-var box2 = createTextBox('Ola', draw);
-
-box1.move(10, 10);
-box2.move(10, 100);
-
-var g = draw.group();
-g.add(box1);
-g.add(box2);
-
-g.move(30, 20);
+var actor2 = createActor('Kele', draw);
+actor2.move(200, 100);
 
 </script>
   

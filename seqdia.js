@@ -19,6 +19,36 @@ function createTextBox(content, draw)
     return group;
 }
 
+
+function createLifeline(topBox, bottomBox, draw)
+{
+    var topBB = topBox.bbox();
+    var bottomBB = bottomBox.bbox();
+
+    console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
+
+    var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y).stroke({ width: 1 });
+    return line;
+}
+
+function createActor(name, draw)
+{
+    var top = createTextBox(name, draw);
+    var bottom = createTextBox(name, draw);
+
+    top.center(0, 0);
+    bottom.center(0, top.bbox().cy + top.bbox().height + 100);
+
+    var lifeline = createLifeline(top, bottom, draw);
+
+    var group = draw.group();
+    group.add(top);
+    group.add(bottom);
+    group.add(lifeline);
+
+    return group;
+}
+
 // TODO: create a drawning
 function Actor(name, draw)
 {
