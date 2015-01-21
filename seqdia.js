@@ -1,8 +1,28 @@
 var ACTOR_HORIZ_MARGIN = 20;
 
-// TODO: create a drawning
-function Actor(name)
+var diagram = SVG('diagram');
+
+function createTextBox(content, draw)
 {
+    var text = draw.text(content);
+
+    var box = draw.rect(text.bbox().width + 15, text.bbox().height + 15);
+    box.fill('rgba(255, 255, 255, 0)');
+    box.attr({ 'stroke-width' : '1px'});
+
+    text.center(box.bbox().cx, box.bbox().cy);
+
+    var group = draw.group();
+    group.add(box);
+    group.add(text);
+
+    return group;
+}
+
+// TODO: create a drawning
+function Actor(name, draw)
+{
+    this.drawning = {}
     this.topDrawning = {}
     this.bottomDrawning = {}
     this.lifeline = {}
@@ -14,6 +34,16 @@ function Actor(name)
     this.getBottom = function() {} // TODO
     this.moveBy = function(x, y) { return; } // TODO
     this.moveTo = function(x, y) { return; } // TODO
+
+    this.topDrawning = createTextBox(name, draw);
+    this.bottomDrawning = createTextBox(name, draw);
+    
+    this.topDrawning.center(0, 0);
+    this.bottomDrawning.center(0, topDrawning.bbox().height + 10);
+
+    this.drawning = draw.group();
+    this.drawning.add(this.topDrawning());
+    this.drawning.add(this.bottomDrawning());
 }
 
 // TODO: create a drawning
@@ -47,7 +77,7 @@ function Diagram()
                                         pos_x);
         for (var actor in actorsToTheRight)
         {
-            actor.moveBy(size, 0);
+            actor.moveBy(size, 0)
         }
         
         var messagesThatTouchActorsToTheRight =
