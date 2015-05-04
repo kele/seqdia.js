@@ -11,18 +11,17 @@
 </head>
   
 <body>
-    <div id="canvas" style="width: 30%; padding: 10px; height: 500px;"></div>
+    <div id="canvas" style="width: 50%; padding: 10px; height: 500px;"></div>
 </body>
   
 <script type="text/javascript" charset="utf-8">
 var draw = SVG('canvas');
 
-var actor = createActor('Kamil', draw);
+var actor1 = Actor('Alice in the wonderland', draw);
+actor1.moveTo(300, 100);
 
-actor.move(100, 100);
-
-var actor2 = createActor('Kele', draw);
-actor2.move(200, 100);
+var actor2 = Actor('Bob', draw);
+actor2.moveTo(100, 100);
 
 </script>
   

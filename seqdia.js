@@ -1,10 +1,9 @@
 var ACTOR_HORIZ_MARGIN = 20;
 
-var diagram = SVG('diagram');
-
 function createTextBox(content, draw)
 {
     var text = draw.text(content);
+    console.log(text.bbox());
 
     var box = draw.rect(text.bbox().width + 15, text.bbox().height + 15);
     box.fill('rgba(255, 255, 255, 0)');
@@ -19,7 +18,6 @@ function createTextBox(content, draw)
     return group;
 }
 
-
 function createLifeline(topBox, bottomBox, draw)
 {
     var topBB = topBox.bbox();
@@ -31,49 +29,40 @@ function createLifeline(topBox, bottomBox, draw)
     return line;
 }
 
-function createActor(name, draw)
+function createMessageLine(leftBox, rightBox, draw)
 {
-    var top = createTextBox(name, draw);
-    var bottom = createTextBox(name, draw);
+    var leftBB = leftBox.bbox();
+    var rightBB = rightBox.bbox();
 
-    top.center(0, 0);
-    bottom.center(0, top.bbox().cy + top.bbox().height + 100);
+    console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
 
-    var lifeline = createLifeline(top, bottom, draw);
-
-    var group = draw.group();
-    group.add(top);
-    group.add(bottom);
-    group.add(lifeline);
-
-    return group;
+    var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y).stroke({ width: 1 });
+    return line;
 }
 
-// TODO: create a drawning
 function Actor(name, draw)
 {
-    this.drawning = {}
-    this.topDrawning = {}
-    this.bottomDrawning = {}
-    this.lifeline = {}
     this.name = name
 
-    this.getLeft = function() {} //  TODO
-    this.getRight = function() {} // TODO
-    this.getTop = function() {} // TODO
-    this.getBottom = function() {} // TODO
-    this.moveBy = function(x, y) { return; } // TODO
-    this.moveTo = function(x, y) { return; } // TODO
-
     this.topDrawning = createTextBox(name, draw);
-    this.bottomDrawning = createTextBox(name, draw);
-    
     this.topDrawning.center(0, 0);
-    this.bottomDrawning.center(0, topDrawning.bbox().height + 10);
+
+    this.bottomDrawning = createTextBox(name, draw);
+    this.bottomDrawning.center(0, this.topDrawning.bbox().cy + topDrawning.bbox().height + 100);
+
+    this.lifeline = createLifeline(this.topDrawning, this.bottomDrawning, draw);
 
     this.drawning = draw.group();
-    this.drawning.add(this.topDrawning());
-    this.drawning.add(this.bottomDrawning());
+    this.drawning.add(this.topDrawning);
+    this.drawning.add(this.bottomDrawning);
+    this.drawning.add(this.lifeline);
+
+    this.bbox = function() { return this.drawning.bbox(); }
+
+    this.moveBy = function(x, y) { this.drawning.dmove(x, y); }
+    this.moveTo = function(x, y) { this.drawning.move(x, y); }
+
+    return this;
 }
 
 // TODO: create a drawning
