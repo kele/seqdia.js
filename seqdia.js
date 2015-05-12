@@ -3,13 +3,13 @@ var ACTOR_HORIZ_MARGIN = 20;
 function createTextBox(content, draw)
 {
     var text = draw.text(content);
-    console.log(text.bbox());
+    console.log(text.rbox());
 
-    var box = draw.rect(text.bbox().width + 15, text.bbox().height + 15);
+    var box = draw.rect(text.rbox().width + 15, text.rbox().height + 15);
     box.fill('rgba(255, 255, 255, 0)');
     box.attr({ 'stroke-width' : '1px'});
 
-    text.center(box.bbox().cx, box.bbox().cy);
+    text.center(box.rbox().cx, box.rbox().cy);
 
     var group = draw.group();
     group.add(box);
@@ -20,8 +20,8 @@ function createTextBox(content, draw)
 
 function createLifeline(topBox, bottomBox, draw)
 {
-    var topBB = topBox.bbox();
-    var bottomBB = bottomBox.bbox();
+    var topBB = topBox.rbox();
+    var bottomBB = bottomBox.rbox();
 
     console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
 
@@ -31,12 +31,10 @@ function createLifeline(topBox, bottomBox, draw)
 
 function createMessageLine(leftBox, rightBox, draw)
 {
-    var leftBB = leftBox.bbox();
-    var rightBB = rightBox.bbox();
+    var leftBB = leftBox.rbox();
+    var rightBB = rightBox.rbox();
 
-    console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
-
-    var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y).stroke({ width: 1 });
+    var line = draw.line(leftBB.cx, leftBB.cy, rightBB.cx, rightBB.cy).stroke({ width: 1 });
     return line;
 }
 
@@ -48,7 +46,7 @@ function Actor(name, draw)
     this.topDrawning.center(0, 0);
 
     this.bottomDrawning = createTextBox(name, draw);
-    this.bottomDrawning.center(0, this.topDrawning.bbox().cy + topDrawning.bbox().height + 100);
+    this.bottomDrawning.center(0, this.topDrawning.rbox().cy + this.topDrawning.rbox().height + 100);
 
     this.lifeline = createLifeline(this.topDrawning, this.bottomDrawning, draw);
 
@@ -57,12 +55,10 @@ function Actor(name, draw)
     this.drawning.add(this.bottomDrawning);
     this.drawning.add(this.lifeline);
 
-    this.bbox = function() { return this.drawning.bbox(); }
+    this.rbox = function() { return this.drawning.rbox(); }
 
     this.moveBy = function(x, y) { this.drawning.dmove(x, y); }
     this.moveTo = function(x, y) { this.drawning.move(x, y); }
-
-    return this;
 }
 
 // TODO: create a drawning
