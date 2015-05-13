@@ -3,7 +3,6 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title>A clock built with the svg.js library, inspired by the Swiss Railway clock</title>
 
     <script src="underscore.js"></script> 
     <script src="svg.js"></script> 
@@ -11,17 +10,25 @@
 </head>
   
 <body>
-    <div id="canvas" style="width: 50%; padding: 10px; height: 500px;"></div>
+    <div id="canvas" style="height: 500px;"></div>
 </body>
   
 <script type="text/javascript" charset="utf-8">
-var draw = SVG('canvas');
+var diag = new Diagram();
 
-var actor1 = Actor('Alice in the wonderland', draw);
-actor1.moveTo(300, 100);
+diag.addActor("Bob");
+diag.addActor("Alice");
+diag.addActor("Bruce");
 
-var actor2 = Actor('Bob', draw);
-actor2.moveTo(100, 100);
+
+diag.addMessage("Bob", "Alice", "Hi", "How are you?");
+diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage("Alice", "Bob", "Oh, Hi! Lolzobenonzan", "I'm fine, thanks :)");
+diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage("Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad", "ss");
+
+var draw = diag.createDrawing();
+
 
 </script>
   
