@@ -3,7 +3,6 @@ var ACTOR_HORIZ_MARGIN = 20;
 function createTextBox(content, draw)
 {
     var text = draw.text(content);
-    console.log(text.rbox());
 
     var box = draw.rect(text.rbox().width + 15, text.rbox().height + 15);
     box.fill('rgba(255, 255, 255, 0)');
@@ -29,13 +28,21 @@ function createLifeline(topBox, bottomBox, draw)
     return line;
 }
 
-function createMessageLine(leftBox, rightBox, draw)
+function createMessageLine(leftBox, rightBox, msg, draw)
 {
     var leftBB = leftBox.rbox();
     var rightBB = rightBox.rbox();
 
     var line = draw.line(leftBB.cx, leftBB.cy, rightBB.cx, rightBB.cy).stroke({ width: 1 });
-    return line;
+
+    var text = draw.text(msg);
+    text.center(line.rbox().cx, line.rbox().y - 10);
+
+    var group = draw.group();
+    group.add(line);
+    group.add(text);
+
+    return group;
 }
 
 function Actor(name, draw)

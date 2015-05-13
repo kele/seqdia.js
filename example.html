@@ -10,19 +10,19 @@
 </head>
   
 <body>
-    <div id="canvas" style="width: 50%; height: 500px;"></div>
+    <div id="canvas" style="height: 500px;"></div>
 </body>
   
 <script type="text/javascript" charset="utf-8">
-var draw = SVG('canvas');
+var draw = SVG('canvas').size(5000, 500);
 
 var actor1 = new Actor('Alice in the wonderland', draw);
-actor1.moveTo(300, 100);
+actor1.moveTo(5000, 100);
 
 var actor2 = new Actor('Bob', draw);
 actor2.moveTo(100, 100);
 
-var line = createMessageLine(actor1.lifeline, actor2.lifeline, draw);
+var line = createMessageLine(actor1.lifeline, actor2.lifeline, "BKAKSKDAasdnkasdnkjaskjdnkjandsnsaS", draw);
 console.log(line.bbox());
 
 </script>
