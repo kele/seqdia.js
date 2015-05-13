@@ -1,5 +1,3 @@
-var ACTOR_HORIZ_MARGIN = 20;
-
 var Drawing = {
     createTextBox: function(content, draw)
     {
@@ -29,16 +27,20 @@ var Drawing = {
         return line;
     },
 
+    createMessageLabel: function(label, draw)
+    {
+        var text = draw.text(label);
+        return text;
+    },
+
     // TODO: refactor
-    createMessageLine: function(leftLine, rightLine, msg, draw)
+    createMessageLine: function(leftLine, rightLine, draw)
     {
         var leftBB = leftLine.rbox();
         var rightBB = rightLine.rbox();
 
         var line = draw.line(leftBB.cx, leftBB.cy, rightBB.cx, rightBB.cy).stroke({ width: 1 });
 
-        var text = draw.text(msg);
-        text.center(line.rbox().cx, line.rbox().y - 10);
 
         // TODO: add arrow
 
@@ -47,10 +49,15 @@ var Drawing = {
         group.add(text);
 
         return group;
+    },
+
+    createMessageDrawing: function(label, line)
+    {
+        // TODO
     }
 };
 
-function Actor(name, draw, left_x, height)
+function Actor(name, draw, height)
 {
     this.name = name
 
@@ -73,11 +80,12 @@ function Actor(name, draw, left_x, height)
     this.moveTo = function(x, y) { this.drawing.move(x, y); }
 }
 
-function Message(from, to, label)
+function Message(from, to, label, content)
 {
-    this.from = from
-    this.to = to
-    this.label = label
+    this.from = from;
+    this.to = to;
+    this.label = label;
+    this.content = content;
 }
 
 function MessageDrawing(msg, y, x1, x2, direction)
@@ -88,17 +96,22 @@ function MessageDrawing(msg, y, x1, x2, direction)
 
 function Diagram()
 {
-    this.actors = [];
+    var MESSAGE_HEIGHT = 100;
+    var TOP_MARGIN = 50;
+    var ACTORBOX_HEIGHT = 100; // TODO: cut it out
+    var MESSAGE_BOTH_SIDES_MARGIN = 20;
+
+    this.actorsNames = new Set();
     this.messages = [];
 
-    this.addActor = function(actor)
+    this.addActor = function(name)
     {
-        // TODO
+        this.actorsNames.add(name);
     }
 
     this.addMessage = function(from, to, label, content)
     {
-        // TODO
+        this.messages.push(new Message(from, to, label, content));
     }
 
     this.clear = function()
@@ -107,7 +120,89 @@ function Diagram()
         this.messages = [];
     }
 
+    this.getHeight = function()
+    {
+        return MESSAGE_HEIGHT * this.messages.length + 2*ACTORBOX_HEIGHT; // TODO: WIP
+    }
+
+    this.getWidth = function()
+    {
+        // TODO: WIP
+        return 200 + this.actorsNames.size()*100;
+    }
+
+
+    this.splitMessagesBySendingActor = function()
+    {
+        var messagesBySender = {};
+
+        for (var name of this.actorsNames)
+            messagesBySender[name] = [];
+
+        for (i = 0; i < this.messages.length; i++)
+        {
+            var sendingActor = this.messages[i].from;
+            messagesBySender[sendingActor].push(this.messages[i]);
+        }
+        return messagesBySender;
+    }
+
+    var setToArray = function(set)
+    {
+        var array = [];
+        for (var k of set) array.push(k);
+        return array;
+
+    }
+
+    var getPositions = function(arr)
+    {
+        var pos = {};
+        for (i = 0; i < arr.length; i++)
+            pos[arr[i]] = i;
+        return pos;
+    }
+
     this.createDrawing = function()
     {
+        var draw = SVG('canvas').size(500, 500); // WIP
+        var actors = [];
+        var names = setToArray(this.actorsNames);
+        var actorPositions = getPositions(names);
+
+        var messagesLabels = [];
+        var gaps = new Array(names.length - 1);
+
+        for (i = 0; i < this.messages.length - 1; i++)
+        {
+            
+            // TODO: create labels and compute gaps
+
+        }
+
+        var messagesOutgoingFromActor = this.splitMessagesBySendingActor();
+
+        for (var actor in messagesOutgoingFromActor)
+        {
+            var msgs = messagesOutgoingFromActor[actor];
+
+            for (i = 0; i < msgs.length; i++)
+            {
+                var m = msgs[i];
+                var labelDrawing = Drawing.createMessageLabel(m.label, draw);
+            }
+        }
+
+
+        for (i = 0; i < names.length; i++)
+        {
+            var name = names[i];
+            actors.push(new Actor(name, draw, this.getHeight()));
+            actors[i].moveTo(100*(i+1), TOP_MARGIN);
+        }
+
+        draw.size(this.getWidth(), this.getHeight());
+
+        return draw;
     }
 }

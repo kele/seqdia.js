@@ -14,16 +14,20 @@
 </body>
   
 <script type="text/javascript" charset="utf-8">
-var draw = SVG('canvas').size(5000, 500);
+var diag = new Diagram();
 
-var actor1 = new Actor('Alice in the wonderland', draw);
-actor1.moveTo(5000, 100);
+diag.addActor("Bob");
+diag.addActor("Alice");
+diag.addActor("Bruce");
 
-var actor2 = new Actor('Bob', draw);
-actor2.moveTo(100, 100);
 
-var line = Drawing.createMessageLine(actor1.lifeline, actor2.lifeline, "BKAKSKDAasdnkasdnkjaskjdnkjandsnsaS", draw);
-console.log(line.bbox());
+diag.addMessage("Bob", "Alice", "Hi", "How are you?");
+diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage("Alice", "Bob", "Oh, Hi! Lolzobenonzan", "I'm fine, thanks :)");
+diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+
+var draw = diag.createDrawing();
+
 
 </script>
   
