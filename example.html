@@ -5,6 +5,8 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
     <script src="Please-compressed.js"></script> 
+    <script src="jquery-2.0.0.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
     <script src="svg.js"></script> 
     <script src="seqdia.js"></script> 
 </head>
@@ -21,12 +23,12 @@ diag.addActor("Alice");
 diag.addActor("Bruce");
 
 
-diag.addMessage("Bob", "Alice", "Hi", "How are you?");
-diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage("Alice", "Bob", "Oh, Hi! Lolzobenonzan", "I'm fine, thanks :)");
-diag.addMessage("Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage("Alice", "Bruce", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage("Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad", "ss");
+diag.addMessage(1, "Bob", "Alice", "Hi", "How are you?");
+diag.addMessage(2, "Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage(3, "Alice", "Bob", "Oh, Hi! Lolzobenonzan", "I'm fine, thanks :)");
+diag.addMessage(4, "Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage(5, "Alice", "Bruce", "Oh, Hi!", "I'm fine, thanks :)");
+diag.addMessage(6, "Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad", "ss");
 
 var draw = diag.createDrawing();
 
