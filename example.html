@@ -4,7 +4,6 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
-    <script src="Please-compressed.js"></script> 
     <script src="jquery-2.0.0.min.js"></script>
     <script src="jquery-ui.min.js"></script>
     <script src="svg.js"></script> 
@@ -20,15 +19,20 @@ var diag = new Diagram();
 
 diag.addActor("Bob");
 diag.addActor("Alice");
+diag.addActor("Bruca");
+diag.addActor("Brucb");
+diag.addActor("Brucc");
+diag.addActor("Brucd");
 diag.addActor("Bruce");
+diag.addActor("Brucf");
 
 
-diag.addMessage(1, "Bob", "Alice", "Hi", "How are you?");
-diag.addMessage(2, "Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage(3, "Alice", "Bob", "Oh, Hi! Lolzobenonzan", "I'm fine, thanks :)");
-diag.addMessage(4, "Alice", "Bob", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage(5, "Alice", "Bruce", "Oh, Hi!", "I'm fine, thanks :)");
-diag.addMessage(6, "Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad", "ss");
+diag.addMessage(1, "Bob", "Alice", "Hi");
+diag.addMessage(2, "Alice", "Bob", "Oh, Hi!");
+diag.addMessage(3, "Alice", "Bob", "Oh, Hi! Lolzobenonzan");
+diag.addMessage(4, "Alice", "Bob", "Oh, Hi!");
+diag.addMessage(5, "Alice", "Bruce", "Oh, Hi!");
+diag.addMessage(6, "Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad");
 
 var draw = diag.createDrawing();
 

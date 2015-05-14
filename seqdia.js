@@ -23,17 +23,15 @@ var Drawing = {
 
         console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
 
-        var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y).stroke({ width: 5, color: colour });
+        var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y)
+                       .stroke({ width: 5, color: colour });
         return line;
     },
 
     createMessageLabel: function(label, draw)
     {
-        var text = draw.text(label).font({
-            'family' : 'Monospace'
-        });
-
-        text.node.onclick = function() { console.log("You clicked :)"); }; // TODO
+        var text = draw.text(label)
+                       .attr('class', 'message_label');
 
         return text;
     },
@@ -208,11 +206,26 @@ function Diagram()
         return messagesLabels;
     }
 
+    function createColors(n)
+    {
+        var colors = [];
+        for (i = 0; i < 360; i += 360 / n)
+        {
+            var hue = i;
+            var saturation = 100;
+            var lightness = 70;
+
+            colors.push("hsl(" + hue + ", " + saturation + "%, " + lightness + "%)");
+        }
+        return colors;
+    }
+
     function createActors(names, gaps, height, draw)
     {
         var actors = [];
         var start = 100;
-        var colors = Please.make_color({colors_returned: names.length});
+
+        var colors = createColors(names.length);
         for (i = 0; i < names.length; i++)
         {
             var name = names[i];
