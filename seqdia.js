@@ -24,7 +24,9 @@ var Drawing = {
         console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
 
         var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y)
-                       .stroke({ width: 5, color: colour });
+                       .stroke({ width: 5, color: colour })
+                       .attr("class", "lifeline");
+
         return line;
     },
 
@@ -264,7 +266,7 @@ function Diagram()
 
     this.createDrawing = function()
     {
-        var draw = SVG('canvas').size(500, 500); // WIP
+        var draw = SVG('diag').size(500, 500); // WIP
         var names = setToArray(this.actorsNames);
         var actorPositions = getPositions(names);
         var messagesLabels = createMessageLabels(this.messages, draw);
@@ -292,7 +294,7 @@ function Diagram()
         setTimeout(function() { drawLegend(actors); }, 200);
         drawLegend(actors);
 
-        var widht = 2500; // WIP
+        var widht = 1000; // WIP
         draw.size(widht, this.getHeight() + 100);
 
 
@@ -311,7 +313,8 @@ function prepareUi() {
         $(this).parent().toggle();
     });
 
-    $("div#legend").hover(function() { $(this).css("opacity", 0.2); },
-                          function() { $(this).css("opacity", 1); });
+    $("div#legend").draggable();
+
+    $(".lifeline").hover(function(event) { console.log(event); });
 }
 setTimeout(prepareUi, 200);
