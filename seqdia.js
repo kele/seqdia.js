@@ -218,6 +218,11 @@ function Diagram()
     {
         // TODO
     }
+    
+    function displayPopup(x, y, popup)
+    {
+        console.log(x, y, popup);
+    }
 
     this.createDrawing = function()
     {
@@ -240,7 +245,7 @@ function Diagram()
 
             messagesLabels[i].move(actors[left].drawing.rbox().cx + MESSAGE_BOTH_SIDES_MARGIN/2, y);
             messagesLabels[i].node.popup = createMessagePopup(this.messages[i]);
-            messagesLabels[i].node.onclick = function() { console.log(this.popup); };
+            messagesLabels[i].node.onclick = function(event) { displayPopup(event.pageX, event.pageY, this.popup); };
 
             Drawing.createMessageLine(actors[left].drawing.rbox().cx, actors[right].drawing.rbox().cx, messagesLabels[i].rbox().y2 + 2, direction, draw);
         }
