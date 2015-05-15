@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="jquery-2.0.0.min.js"></script>
     <script src="jquery-ui.min.js"></script>
     <script src="svg.js"></script> 
@@ -11,7 +12,7 @@
 </head>
   
 <body>
-    <div id="diag" style="height: 500px;"></div>
+    <div id="diag" style="margin-left: 100px;"></div>
 </body>
   
 <script type="text/javascript" charset="utf-8">
@@ -32,11 +33,28 @@ diag.addMessage(2, "Alice", "Bob", "Oh, Hi!");
 diag.addMessage(3, "Alice", "Bob", "Oh, Hi! Lolzobenonzan");
 diag.addMessage(4, "Alice", "Bob", "Oh, Hi!");
 diag.addMessage(5, "Alice", "Bruce", "Oh, Hi!");
-diag.addMessage(6, "Bruce", "Alice", "asndkanskjdnkjaskndkj askjndknaskjndknsadjsad");
+diag.addMessage(6, "Bruce", "Alice", "asndka");
 
 var draw = diag.createDrawing();
-
-
 </script>
-  
+
+
+<div msg_id="1" class="popup" style="display: none;">
+    <div class="handle"></div><br>
+    <strong style="padding: 5px;">1. Hi! [Bob -> Alice]</strong>
+    <br>
+    <div class="popup_callstack_button"><strong>Callstack</strong></div>
+    <div class="popup_callstack">
+<pre>main.c@77: </pre>
+    <br>
+    </div>
+    <div class="popup_content">
+<pre><strong>main.c@123</strong>
+Hi, how are ya? :)
+</pre>
+    </div>
+</div>
+
+<div id="legend"><div id="tooltip" style="display: none;">Drag me! Oh, drag me, please!</div></div>
+
 </html>

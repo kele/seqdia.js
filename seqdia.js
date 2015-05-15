@@ -1,7 +1,7 @@
 var Drawing = {
-    createTextBox: function(content, colour, draw)
+    createTextBox: function(draw, label, colour)
     {
-        var text = draw.text(content);
+        var text = draw.text(label);
 
         var box = draw.rect(text.rbox().width + 15, text.rbox().height + 15)
             .fill(colour)
@@ -12,33 +12,27 @@ var Drawing = {
         var group = draw.group();
         group.add(box);
         group.add(text);
-
+        group.addClass('textbox');
         return group;
     },
 
-    createLifeline: function(topBox, bottomBox, colour, draw)
+    createLifeline: function(draw, x, y1, y2, colour)
     {
-        var topBB = topBox.rbox();
-        var bottomBB = bottomBox.rbox();
-
-        console.assert(topBB.cx == bottomBB.cx, "x-center of actor boxes are not equal");
-
-        var line = draw.line(topBB.cx, topBB.y2, bottomBB.cx, bottomBB.y)
-                       .stroke({ width: 5, color: colour })
-                       .attr("class", "lifeline");
+        var line = draw.line(x, y1, x, y2)
+                       .stroke({ 'width' : 5, 'color': colour })
+                       .addClass('lifeline');
 
         return line;
     },
 
-    createMessageLabel: function(label, draw)
+    createMessageLabel: function(draw, label)
     {
         var text = draw.text(label)
-                       .attr('class', 'message_label');
-
+                       .addClass('message_label');
         return text;
     },
 
-    createMessageLine: function(x1, x2, y, direction, draw)
+    createMessageLine: function(draw, x1, x2, y, direction)
     {
         var group = draw.group().stroke({width : 2});
 
@@ -49,7 +43,9 @@ var Drawing = {
                                   [x1 + 20, y + 10],
                                   [x1 - 20, y + 10],
                                   [x1 - 20, y],
-                                  [x1, y]]).stroke({width : 2}).fill('none');;
+                                  [x1, y]]).stroke({width : 2})
+                            .fill('none');;
+
             group.add(line);
             group.add(draw.line(x2, y, x2 - 10, y - 2));
             group.add(draw.line(x2, y, x2 - 10, y + 2));
@@ -71,6 +67,7 @@ var Drawing = {
             }
         }
 
+        group.addClass('message_line');
         return group;
     },
 };
@@ -80,24 +77,25 @@ function Actor(name, colour, draw, height)
     this.name = name;
     this.colour = colour;
 
-    this.topDrawing = Drawing.createTextBox(name, colour, draw);
-    this.topDrawing.center(0, 0);
-
-    this.bottomDrawing = Drawing.createTextBox(name, colour, draw);
-    this.bottomDrawing.center(0, this.topDrawing.rbox().cy + this.topDrawing.rbox().height + height);
-
-    this.lifeline = Drawing.createLifeline(this.topDrawing, this.bottomDrawing, colour, draw);
-    this.lifeline.node.title = name;
-    this.lifeline.node.onclick = function(event) { console.log(name, event); };
-
     this.drawing = draw.group();
+
+    this.topDrawing = Drawing.createTextBox(draw, name, colour);
+    this.topDrawing.center(0, 0);
     this.drawing.add(this.topDrawing);
+
+    this.bottomDrawing = Drawing.createTextBox(draw, name, colour);
+    this.bottomDrawing.center(0, this.topDrawing.rbox().cy + this.topDrawing.rbox().height + height);
     this.drawing.add(this.bottomDrawing);
+
+    this.lifeline = Drawing.createLifeline(
+                        draw,
+                        this.topDrawing.rbox().cx,
+                        this.topDrawing.rbox().y2,
+                        this.bottomDrawing.rbox().y,
+                        colour);
+    this.lifeline.attr({'actor' : name});
     this.drawing.add(this.lifeline);
 
-    this.rbox = function() { return this.drawing.rbox(); }
-
-    this.moveBy = function(x, y) { this.drawing.dmove(x, y); }
     this.moveTo = function(x, y) { this.drawing.move(x, y); }
 }
 
@@ -129,60 +127,33 @@ function Diagram()
         this.messages.push(new Message(id, from, to, label));
     }
 
-    this.clear = function()
-    {
-        this.actors = [];
-        this.messages = [];
-    }
-
     this.getHeight = function()
     {
         return MESSAGE_HEIGHT * this.messages.length
-            + 2 * ACTORBOX_HEIGHT; // TODO: WIP
-    }
-
-    this.getWidth = function()
-    {
-        // TODO: WIP
-        return 200 + this.actorsNames.size*100;
-    }
-
-
-    this.splitMessagesBySendingActor = function()
-    {
-        var messagesBySender = {};
-
-        for (var name of this.actorsNames)
-            messagesBySender[name] = [];
-
-        for (i = 0; i < this.messages.length; i++)
-        {
-            var sendingActor = this.messages[i].from;
-            messagesBySender[sendingActor].push(this.messages[i]);
-        }
-        return messagesBySender;
+            + 1 * ACTORBOX_HEIGHT; // TODO: WIP
     }
 
     function setToArray(set)
     {
         var array = [];
-        for (var k of set) array.push(k);
+        for (var k of set)
+            array.push(k);
         return array;
     }
 
-    function getPositions(arr)
+    function getPositions(elements)
     {
         var pos = {};
-        for (i = 0; i < arr.length; i++)
-            pos[arr[i]] = i;
+        for (i = 0; i < elements.length; i++)
+            pos[elements[i]] = i;
         return pos;
     }
 
-    function computeGaps (positions, messages, labels)
+    function computeGapsBetweenActors(positions, messages, labels)
     {
         var gaps = [];
         for (i = 0; i < Object.keys(positions).length; i++)
-            gaps.push(100);
+            gaps.push(0);
 
         for (i = 0; i < messages.length; i++)
         {
@@ -202,7 +173,7 @@ function Diagram()
         for (i = 0; i < messages.length; i++)
         {
             var m = messages[i];
-            var labelDrawing = Drawing.createMessageLabel((i + 1) + ". " + m.label, draw);
+            var labelDrawing = Drawing.createMessageLabel(draw, (i + 1) + ". " + m.label);
             messagesLabels.push(labelDrawing);
         }
         return messagesLabels;
@@ -225,7 +196,7 @@ function Diagram()
     function createActors(names, gaps, height, draw)
     {
         var actors = [];
-        var start = 100;
+        var start = 0;
 
         var colors = createColors(names.length);
         for (i = 0; i < names.length; i++)
@@ -249,7 +220,9 @@ function Diagram()
         var legendText = "";
         for (var a of actors)
         {
-            legendText += "<span style=\"color: " + a.colour + ";\"><strong>" + a.name + "</strong></span><br/>\n";
+            legendText += "<div class=\"legend_marker\" style=\"background: " + a.colour + ";\">";
+            legendText += a.name;
+            legendText += "</div>";
         }
 
         $("div#legend").html(legendText).show();
@@ -257,23 +230,58 @@ function Diagram()
     
     function displayPopup(x, y, popup)
     {
-        $("div#msg_" + popup.id)
+        $("div.popup[msg_id=" + popup.id + "]")
             .toggle()
             .css("position", "absolute")
             .css("top", y + "px")
             .css("left", x + "px");
     }
 
+    function alignActors(draw, actors)
+    {
+        var leftmost = actors[0];
+
+        var offset = 0 - leftmost.drawing.rbox().x;
+        for (var a of actors)
+        {
+            a.drawing.dmove(offset, 0);
+        }
+
+        console.log(actors.length);
+        for(i = 0; i < actors.length - 1; i++)
+        {
+            if (actors[i].drawing.rbox().x2 > actors[i + 1].drawing.rbox().x - 50)
+            {
+                actors[i + 1].drawing.dmove(actors[i].drawing.rbox().x2 + 50 - actors[i + 1].drawing.rbox().x, 0);
+            }
+        }
+    }
+
+    function getWidth(actors)
+    {
+        var WIDTH_MARGIN = 10;
+        var rightmost = actors[actors.length - 1].drawing.rbox().x2;
+
+        return rightmost + WIDTH_MARGIN; 
+    }
+
+    function getHeight(actors)
+    {
+        var HEIGHT_MARGIN = 10;
+        var bottommost = actors[0].drawing.rbox().y2;
+        return bottommost + HEIGHT_MARGIN;
+    }
+
     this.createDrawing = function()
     {
-        var draw = SVG('diag').size(500, 500); // WIP
+        var draw = SVG('diag');
         var names = setToArray(this.actorsNames);
         var actorPositions = getPositions(names);
         var messagesLabels = createMessageLabels(this.messages, draw);
-        var gaps = computeGaps(actorPositions, this.messages, messagesLabels);
+        var gaps = computeGapsBetweenActors(actorPositions, this.messages, messagesLabels);
         var actors = createActors(names, gaps, this.getHeight(), draw);
         
-        // TODO: align actors if they overlap
+        alignActors(draw, actors);
 
         for (i = 0; i < this.messages.length; i++)
         {
@@ -288,15 +296,20 @@ function Diagram()
             messagesLabels[i].node.popup_info = createMessagePopup(this.messages[i]);
             messagesLabels[i].node.onclick = function(event) { displayPopup(event.pageX, event.pageY, this.popup_info); };
 
-            Drawing.createMessageLine(actors[left].drawing.rbox().cx, actors[right].drawing.rbox().cx, messagesLabels[i].rbox().y2 + 2, direction, draw);
+            Drawing.createMessageLine(
+                    draw,
+                    actors[left].drawing.rbox().cx,
+                    actors[right].drawing.rbox().cx,
+                    messagesLabels[i].rbox().y2 + 2,
+                    direction);
         }
 
+
+        var width = getWidth(actors);
+        var height = getHeight(actors);
+        draw.size(width, height);
+
         setTimeout(function() { drawLegend(actors); }, 200);
-        drawLegend(actors);
-
-        var widht = 1000; // WIP
-        draw.size(widht, this.getHeight() + 100);
-
 
         return draw;
     }
@@ -314,7 +327,5 @@ function prepareUi() {
     });
 
     $("div#legend").draggable();
-
-    $(".lifeline").hover(function(event) { console.log(event); });
 }
 setTimeout(prepareUi, 200);
