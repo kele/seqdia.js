@@ -228,9 +228,19 @@ function Diagram()
         $("div#legend").html(legendText).show();
     }
     
-    function displayPopup(x, y, popup)
+    function displayMessagePopup(x, y, popup)
     {
         $("div.popup[msg_id=" + popup.id + "]")
+            .toggle()
+            .css("position", "absolute")
+            .css("top", y + "px")
+            .css("left", x + "px");
+    }
+
+    // TODO: use it
+    function displayNotePopup(x, y, popup)
+    {
+        $("div.popup[note_id=" + popup.id + "]")
             .toggle()
             .css("position", "absolute")
             .css("top", y + "px")
@@ -294,7 +304,7 @@ function Diagram()
 
             messagesLabels[i].move(actors[left].drawing.rbox().cx + MESSAGE_BOTH_SIDES_MARGIN/2, y);
             messagesLabels[i].node.popup_info = createMessagePopup(this.messages[i]);
-            messagesLabels[i].node.onclick = function(event) { displayPopup(event.pageX, event.pageY, this.popup_info); };
+            messagesLabels[i].node.onclick = function(event) { displayMessagePopup(event.pageX, event.pageY, this.popup_info); };
 
             Drawing.createMessageLine(
                     draw,
